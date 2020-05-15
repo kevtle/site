@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SDS 348 Portfolio</title>
+    <link>/</link>
+    <description>Recent content on SDS 348 Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 01 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>OREO</title>
+      <link>/blog/oreo/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/oreo/</guid>
+      <description>  </description>
+    </item>
+    
+    <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project2/</link>
+      <pubDate>Fri, 01 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>(5 pts) Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?  #My Data library(boot) view(aids) aids &amp;lt;- aids aids2&amp;lt;-aids The data that I chose for this project is a dataset called “aids” which deals with the delays in AIDS reporting in England and Wales. The dataset contains records about the reported cases of AIDS diagnosed from July 1983 to the end of 1992.</description>
+    </item>
+    
+    <item>
+      <title>Project 1: Exploratory Data Analysis with Tidyverse Tools</title>
+      <link>/project1/</link>
+      <pubDate>Sun, 15 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>R Markdown My Chosen Datasets cntygrad &amp;lt;- read.csv(&amp;quot;ResultsGrid_ExportData-2.csv&amp;quot;) cntyethnic &amp;lt;- read.csv(&amp;quot;ResultsGrid_ExportData.csv&amp;quot;) For this project, I decided to take a dataset on graduations and educations levels in all the counties across Texas and combine it with a dataset on the ethnic makeup of all the counties across Texas. The County Education dataset (labelled cntygrad) has the percentage of all the people in each county that graduated high school, completed their bachelors degree, or are unemployed.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have recently completed:
+  Exploratory Data Analysis with Tidyverse Tools
+  Modeling, Testing, and Classification
+  These projects were a blast to do, and I had a bunch of fun analyzing the data :)</description>
+    </item>
+    
+  </channel>
+</rss>

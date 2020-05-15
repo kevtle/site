@@ -1,0 +1,194 @@
+---
+title: 'Project 1: Exploratory Data Analysis'
+author: "Jeffrey Cai: JC79847"
+date: '3/15/20'
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+```
+
+#### 0. Introduction
+
+*In this Exploratory Project, I gathered two datasets, one with  NBA (National Basketball Association) player's statistics for the 2019 season, and the other of the advanced stats for these players for the season. I was able to aquire and decide what to use from the databases given to me as well as small amounts of research on a search engine for an appropriate dataset that would fufill the parameters for this project. These two datasets are particularly interesting to me as I am very interested in basketball and always wanted to look further into how analytics and statistics take into play how well a player is. By looking at basic stats as well as advanced metrics of each NBA player, I can look further into the correlation of basic statistics to advanced metrics. One particular thing I want to look into is the distribution of points scored, between teams, positions, and other factors.*
+
+#### 1. Tidying: Rearranging Wide/Long
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(tibble)
+
+
+library(readxl)
+NBAStat <- read_excel("NBAStat.xlsx")
+glimpse(NBAStat)
+
+library(readxl)
+NBAAdvStat <- read_excel("NBAAdvStat.xlsx")
+glimpse(NBAAdvStat)
+
+#LAL_Tidier <- LAL_Rost%>%mutate('SdTsPercent' =sd(tspercent,na.rm=T))
+#LAL_Tidy <- LAL_Tidier%>%pivot_wider(names_from="Name", values_from="SdTsPercent")
+```
+
+
+#### 2. Joining/Merging
+
+*I joined/merged NBA_Stat and NBA_AdvStat using the "inner-join" function by ID -> Name. This allowed me to merge each NBA player's general statistics with their advanced metrics. On our new table, we will have 540 players with 60 variables. Similar variables from both tables include Name, Age, Position, Team, and Games Played. *
+```{r}
+
+names(NBAStat)[names(NBAStat) == "player"] <- "Name"
+names(NBAAdvStat)[names(NBAAdvStat) == "player"] <- "Name"
+NBA_Gen <- NBAStat %>% inner_join(NBAAdvStat,by="Name")
+glimpse(NBA_Gen)
+
+```
+#### 3. Wrangling
+
+*Using the six core 'dplyr' functions, I was able to manipulate our data to look into more detail on statistics. I first used the "filter()" on my merged datasets to only see players (19 players) on the Los Angeles Lakers, my favorite basketball team. Using this team, I rearranged our data to specifically arrange points per game(Brandon Ingram, Kyle Kuzma, Julius Randle tied for first at 16.1 PPG), true shooting percentage and usage percentage to compare the teams statistics. This was then done to the entire dataset of all NBA players, without removing other variables from the two datasets, arranged from highest points per game to lowest. Using this modified dataset, I then used the 'group_by()' and 'summarize()' function to compare PPG and Average FG Percentage between different teams and different positions. Memphis had the highest PPG by adding all the average points per game of the players on the team and the point guard position averages the highest points per game as well as the highest usage percentage of the five position.*
+*After observing a specific team, as well as determining which team and position has the highest points per game, I compared the average points per game, true shooting percentage and usage percentage of all players by position. We found that the highest points per game for each position were; Point Guard: Damian Lillard (26.9); Shooting Guard: James Harden (30.4); Small Forward: Kevin Durant (26.4); Anthony Davis (28.1); Center: Demarcus Cousins (25.2). Lastly, we compared which age of NBA players has a higher scoring average in comparison with their field goal percentage and which age had a better PER (Player Efficiency Rating) conjointed with average points per game, minutes per game, usage percentage, and field goal percentage. This is important as we look at what age is ideally the most effective in scoring and contributing for the team in a positive way (PER). In order to efficiently and accurately compare our data to find our results, we also arranged our data by using 'select()' to display Name, Team, Points, Tsp, Usg, and Field-goal percentage before all other variables of each player. We also mutated our variable "fgpercent" to "FieldPct" to have an easier percentage to analyze for each player. Comparing many different variables helped us to fully understand and compare what group of players is the most effective scoring the basketball for their basketball team.*
+
+```{r}
+NBA_Gen2 <- NBA_Gen%>% mutate('Fieldpct' =ntile(fgpercent,100))
+glimpse(NBA_Gen2)
+
+LAL_Rost <- NBA_Gen2%>%filter(grepl("LAL",tm.x ))
+glimpse(LAL_Rost)
+
+LAL_NBA_Gen2 <- NBA_Gen2%>%filter(tm.x=="LAL")%>%summarise(mean(age.x,na.rm=T), mean(pts,na.rm=T))
+glimpse(LAL_NBA_Gen2)
+
+LAL_Rost <- LAL_Rost%>%arrange(desc(pts))%>%select(Name,tm.x,pts,tspercent,usgpercent,everything())
+LAL_Rost%>%arrange(desc(pts))
+
+
+NBA_Comp <- NBA_Gen2%>%select(Name,tm.x,pts,tspercent,usgpercent,Fieldpct,everything())
+NBA_CompPts <- NBA_Comp%>%arrange(desc(pts))
+glimpse(NBA_CompPts)
+
+NBA_CompPpg <- NBA_CompPts%>%group_by(tm.x)%>%summarize(PPG=sum(pts,na.rm=T),AvgFgPct=mean(Fieldpct,na.rm=T))
+NBA_CompPpg <- NBA_CompPpg%>%arrange(desc(PPG), desc(AvgFgPct))
+glimpse(NBA_CompPpg)
+
+NBA_CompByPos <- NBA_CompPts%>%group_by(pos.x)%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Usg'=mean(usgpercent))
+NBA_CompByPos <- NBA_CompByPos%>%arrange(desc(Avg_Ppg), desc(Avg_Usg))
+glimpse(NBA_CompByPos)
+
+PG_PosComp <- NBA_CompPts%>%filter(grepl("PG",pos.x ))
+PG_PosComp%>%filter(grepl("PG",pos.x ))%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Tsp'=mean(usgpercent))
+glimpse(PG_PosComp)
+
+
+SG_PosComp <- NBA_CompPts%>%filter(grepl("SG",pos.x ))
+SG_PosComp%>%filter(grepl("SG",pos.x ))%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Tsp'=mean(usgpercent))
+glimpse(SG_PosComp)
+
+SF_PosComp <- NBA_CompPts%>%filter(grepl("SF",pos.x))
+SF_PosComp%>%filter(grepl("SF",pos.x ))%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Tsp'=mean(usgpercent))
+glimpse(SF_PosComp)
+
+PF_PosComp <- NBA_CompPts%>%filter(grepl("PF",pos.x ))
+PF_PosComp%>%filter(grepl("PF",pos.x ))%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Tsp'=mean(usgpercent))
+glimpse(PF_PosComp)
+
+C_PosComp <- NBA_CompPts%>%filter(grepl("C",pos.x ))
+C_PosComp%>%filter(grepl("C",pos.x ))%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Tsp'=mean(usgpercent))
+glimpse(C_PosComp)
+
+NBA_CompByFgPct <- NBA_CompPts%>%group_by(age.x)%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Usg'=mean(usgpercent),'Avg_FieldPct'=mean(Fieldpct))%>%arrange(desc(Avg_Ppg), desc(Avg_Usg),desc(Avg_FieldPct))
+glimpse(NBA_CompByFgPct)
+
+NBA_CompByMpgPer <- NBA_CompPts%>%group_by(age.x)%>%summarize('Avg_Ppg'=mean(pts), 'Avg_Usg'=mean(usgpercent),'Avg_FieldPct'=mean(Fieldpct),'Avg_Mpg'=mean(mp.x), 'Avg_Per'=mean(per))%>%arrange(desc(Avg_Ppg), desc(Avg_Usg),desc(Avg_FieldPct),desc(Avg_Mpg),desc(Avg_Per))
+glimpse(NBA_CompByMpgPer)
+
+Amt_Players <- NBA_Gen2%>%group_by(tm.x)%>%count(sort=T)
+glimpse(Amt_Players)
+```
+#### 4. Visualizing
+
+*LAL pts v. usg percentage (also field pct Color)*
+
+*In the Lakers plot, we compared the Points per game of each player on the team with the percent usage for the season. Looking at the graph, we can see a slight correlation between the two varibles (x and y). Our color scheme represents the field percentage of each player (dot). As shown on the graph, there is no correlation showing that field goal percentage is related to the amounts of points per game or the percent usage. Although there are more dark spots with less points per game, we cannot fully determine that there is a relationship.*
+```{r}
+LA_Plot <- ggplot(LAL_Rost, aes(pts, usgpercent,color=Fieldpct))+geom_point()+
+xlim(0,20)+ylim(0,50)+ggtitle("Los Angeles Lakers PPG vs. Usage Percentage")+xlab("Points per Game (PPG)")+ylab("Usage Percentage (%)")
+
+LA_Plot
+```
+
+
+*NBA pts v. usg percentage (and field pct --> Color)*
+```{r}
+NBA_Plot <- ggplot(NBA_CompPts, aes(pts, usgpercent, color=Fieldpct))+geom_point(size=0.5)+
+xlim(0,30)+ylim(0,50)+ggtitle("NBA Players PPG vs. Usage Percentage")+xlab("Points per Game (PPG)")+ylab("Usage Percentage (%)")+theme_minimal() 
+
+NBA_Plot
+```
+*Looking at our plot looking at Points per Game vs. Usage Percentage, we can see there is a correlation between the two values. However, there is no correlation with Field percentage as the colors are scattered throughout the scatterplot. In our graph, we do see a few outliers as there are very high percent usage players who are not averaging many points per game. A better comparison for color scheme would be minutes per game as coded below.*
+
+
+*NBA Pts v. Usg Percent (Color Displaying Minutes)*
+```{r}
+NBA_Plot_pts_usg_mp <- ggplot(NBA_CompPts, aes(pts, usgpercent, color=mp.x))+geom_point(size=0.5)+ xlim(0,30)+ylim(0,50)+ggtitle("NBA Players PPG vs. Usage Percentage (Relationship with Minutes")+xlab("Points per Game (PPG)")+ylab("Usage Percentage (%)")+theme_minimal() 
+
+NBA_Plot_pts_usg_mp
+```
+*NBA Comparison of Position PPG and Average Usage*
+```{r}
+NBA_CompPlot <- ggplot(NBA_CompByPos, aes(x = pos.x, y = Avg_Ppg, fill=Avg_Usg)) +geom_bar(stat="summary",fun.y="mean") +ggtitle("Which Position Averages More Points Per Game") +xlab("Position") +ylab("Average Points Per Game (PPG)") +ylim(0,10)
+
+NBA_CompPlot
+```
+*This Bar plot compares all 5 positions and the average Points Per Game for each position. The color on the graph represents the Percent usage of each position. Shown in the graph, we can see that Shooting Guard and Point Guard are fairly close in Points Per Game. However, the point guard position seems to average a higher average percent usage per game. This graph is a good representation of the correlation to compare each position.*
+
+#### 5. Dimensionality Reduction
+*I chose to do the 3 cluster for my dataset based off the Silhouette width graph. I first picked k=3 points at random as initial centers, then assigned each datapoint to the nearest center. I then calculated centroids for each cluster. Using this, I found my average width to be 0.4. Based on our final cluster graph, minutes per game and usage have the more correlation of all the variables.*
+```{r}
+library(cluster)
+library(tidyverse)
+
+pam2<-NBA_CompPts%>%select(-pts, -tspercent, -usgpercent, -mp.x)%>%pam(3)
+pam2
+
+sil_width<-vector() 
+for(i in 2:10){
+pam_fit <- NBA_CompPts%>%select(-pts, -tspercent, -usgpercent, -mp.x)%>%pam(i)
+sil_width[i] <- pam_fit$silinfo$avg.width }
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks=1:10)
+
+NBAFinal<-NBA_CompPts%>%mutate(cluster=as.factor(pam2$clustering))
+
+NBACl<-NBAFinal%>%group_by(pts, tspercent, usgpercent, mp.x)%>%count(cluster)%>%arrange(desc(n))%>%
+pivot_wider(names_from="cluster",values_from="n",values_fill = list('n'=0))
+
+NBACl
+
+ggplot(NBAFinal, aes(x=pts,y=tspercent, color=cluster))+ ggtitle("PPG vs. True Shooting Pt")+geom_point()
+plot(pam2,which=2)
+
+library(GGally)
+ggpairs(NBAFinal, columns=5:12, aes(color=cluster))
+```
+
+
+...
+
+
+
+
+

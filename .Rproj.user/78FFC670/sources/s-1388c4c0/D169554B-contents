@@ -1,0 +1,196 @@
+---
+title: "Project 1: Exploratory Data Analysis with Tidyverse Tools"
+author: "Kevin Le (KTL539)"
+date: "2020-03-15"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+  pdf_document:
+    toc: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+
+library(knitr)
+```
+
+## R Markdown
+
+##### My Chosen Datasets
+```{R}
+cntygrad<-read.csv("ResultsGrid_ExportData-2.csv")
+cntyethnic<-read.csv("ResultsGrid_ExportData.csv")
+```
+*For this project, I decided to take a dataset on graduations and educations levels in all the counties across Texas and combine it with a dataset on the ethnic makeup of all the counties across Texas. The County Education dataset (labelled cntygrad) has the percentage of all the people in each county that graduated high school, completed their bachelors degree, or are unemployed. The county ethnicity dataset has variables for hispanic, white, African American, Native American, Asian, Pacific Islander, and mixed race. I am hoping to find an association with a particular ethnic group having a significantly larger amount of education in larger population counties. These two datasets were obtained from the Texas Associations of Counties website. *
+
+
+##### Tidying Data
+```{R}
+library(tidyr)
+library(tidyverse)
+cntygrad %>% pivot_longer(c("County"), names_to="Type", values_to="Counties") %>%
+  pivot_wider(names_from="Type", values_from ="Counties")
+
+```
+*My data was already tidy, so I untidied it by pivot_longer() and tidied it back up using pivot_wider().Pivot_longer() was selected on the County column, which then made a column named "Type" and each observation under it was named "County". This doesn't do much at all since my data was already tidy, so I switched it back using pivot_wider(), which got each name from the "Type" column and made it the name for the new column (which is the county column) and all of the values for that column come from the already existing Counties column.*
+
+##### Merging Data
+```{R}
+cnty <- cntyethnic %>% left_join(cntygrad)
+```
+*I used a left_join() function to merge these two datasets together because both datasets have all of the exact counties in common with each other, so left joining would combine the same county variable but keep the rest of the other different variables in the new dataset. No cases were dropped or were needed to drop since all counties were accounted for in each observation in both datasets.*
+
+##### Wrangling Data
+```{R}
+#Renaming my varibles via rename()
+cnty <- cnty %>% rename("Hispanic"=Ethnicity....Hispanic,
+                        "White"=Race....White.Alone,
+                        "AfricanAmerican"=Race....African.American.Alone, 
+                        "NativeAmerican"=Race....American.Indian...Alaska.Native.Alone, 
+                        "Asian"=Race....Asian.Alone, 
+                        "PacificIslander" = Race....Native.Hawaiian.and.Other.Pacific.Islander.Alone, 
+                        "MultiRacial"=Race....Multi.Racial, 
+                        "HSGrad" = X..High.School.Graduate.or.Higher, 
+                        "BSDegree" =X..Bachelor.s.Degree.or.Higher, 
+                        "Unemployed"=Unemployment.Rate....) 
+
+## JUST AS A NOTE: Hispanic is an ethnicity and not a race, and thus do not factor into the percentage of races in each county. It is its own separate variable. The numbers under hispanic category represent the percentage of the total population that are hispanic in that county. 
+
+#Seeing which counties have large hispanic population and large percentage of people with Bach degree
+cnty %>% filter( Hispanic >= 50 & BSDegree >=20)
+
+#Seeing which counties have the highest percentage of unemployed. 
+cnty %>% arrange(desc(Unemployed)) %>% head()
+
+#Removing all data about graduation, degree-owning, and unemployment in each county
+cnty %>% select(-HSGrad) %>% select(-BSDegree) %>% select(-Unemployed) 
+
+#Seeing which counties have highest percentage of Asians. 
+cnty %>% arrange(desc(Asian)) %>% head()
+
+#Total Percentage of Educated Population in each county 
+cnty %>% group_by(County) %>% summarize(totalEducated = HSGrad+BSDegree)
+
+#Top Counties with Highest Graduation Rates
+cnty %>% group_by(County) %>% top_n(5, HSGrad) %>% summarize(mean(HSGrad))
+
+#Seeing average percentage of Asians in each county.
+cnty %>% mutate('percentAsian' = ntile(Asian,100))
+
+#Average percentage of African Americans in the 254 Texas counties. 
+cnty %>% summarize(mean(AfricanAmerican, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of White people in the 254 Texas counties. 
+cnty %>% summarize(mean(White, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of Asians in the 254 Texas counties. 
+cnty %>% summarize(mean(Asian, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of Pacific Islanders and Hawaiians in the 254 Texas counties. 
+cnty %>% summarize(mean(PacificIslander, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of Hispanic people in the 254 Texas counties. 
+cnty %>% summarize(mean(Hispanic, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of Native Americans in the 254 Texas counties. 
+cnty %>% summarize(mean(NativeAmerican, na.rm=T), n(), n_distinct(County))
+
+#Average percentage of Mixed Race people in the 254 Texas counties. 
+cnty %>% summarize(mean(MultiRacial, na.rm=T), n(), n_distinct(County))
+
+#Average Unemployement Percentage in All Texas Counties 
+cnty %>% summarize(`Average Unemployed`=mean(Unemployed, na.rm=T))
+
+#Average High School Graduation Percentage in All Texas Counties
+cnty %>% summarize(`Average HS Graduation`=mean(HSGrad, na.rm=T))
+
+#Average Bachelor Degree Owning Percentage in All Texas Counties
+cnty %>% summarize(`Average Bachelor's`=mean(BSDegree, na.rm=T))
+
+#Biggest values for each category
+cnty %>% summarize_if(is.numeric, list(min=min), na.rm=T)
+
+#Largest Values for each category
+cnty %>% summarize_if(is.numeric, list(max=max), na.rm=T)
+
+```
+*Firstly, I renamed all of the variables in the joined dataset to have each name be shorter and easier to type using the rename() function, a type of select() dyplr function. I then filtered out all of the counties that had a high Hispanic population of over 50% and a high bachelor degree-owning population, and 6 counties showed up. I also looked at counties that had the highest percentages of unemployed individuals. I also looked at counties with both the highest high school graduation rates and highest bachelor degree ownership.*
+*In the next few lines of code, I looked at the average percentage of each individual ethnic and race group across all counties in Texas. The smallest percent living in all counties in Texas would be the Pacific Islander race. I then looked at all of the averages for unemployment, high school graduation, and bachelor-owning people across all Texas counties. A shocking detail from this was that the average unemployment rate is 4.47% across Texas, which is a lot smaller than I was expecting. I used the summarize() function for all of these commands. I then summarized each category using summarize_if() and found the maximum and minimum values for each variable. Although I don't know in what particular county each of these max and min values are present in, it is interesting to know that the largest % unemployment in one of the Texas counties is 11.7% which is massive!*
+
+##### Correlation Heat Map
+```{R}
+#Making correlation matrix from cnty dataset
+library(ggplot2)
+corcnty <- cnty %>%na.omit%>%select_if(is.numeric)
+cor(corcnty)
+
+#Making data tidy
+tidycor <- cor(corcnty) %>% as.data.frame %>% rownames_to_column %>%
+pivot_longer(-1,names_to="name",values_to="correlation")
+view(tidycor)
+
+#Making the matrix
+tidycor%>%ggplot(aes(rowname,name,fill=correlation))+
+geom_tile()+ scale_fill_gradient2(low="blue",mid="yellow",high="red")+ 
+geom_text(aes(label=round(correlation,2)),color = "black", size = 2)+ 
+theme(axis.text.x = element_text(angle = 90, hjust=1))+ 
+coord_fixed() 
+
+#I referenced the sample codes from lecture for the code above to make the matrix!^
+```
+
+
+##### Making GGPlots
+```{R}
+#First plot
+ggplot(data = cnty, aes(x = HSGrad, y = Unemployed , color = BSDegree), stat="summary") +
+geom_point(size=4) + 
+theme_light() + ggtitle("Percent High School Graduates vs. Percent Unemployment Rates & Bachelor Owning People") + ylab("Unemployed (%)") + xlab("High School Graduates (%) ")
+
+#Second Plot
+cnty %>% ggplot(aes(BSDegree, Asian, color=HSGrad))+geom_line()+
+scale_color_gradient2(low = "blue",mid="red",midpoint=6) +
+  scale_y_continuous(breaks=seq(0, 20, 2), labels=c("0%","2%","4%","6%","8%","10%","12%","14%","16%","18%","20%")) + ggtitle("Asian Population vs Bachelor Degree Owning") + ylab("Asian Population (%)") + xlab("Has Bachelor's Degree (%) ") + theme_minimal()
+```
+*For the first plot that's comparing the percentage of high school graduates to the percent of unemployed individuals and people with a bachelor's degree in each county, the general trend seems to be that the more high school graduates there are in a particular county, the less unemployed people there are and the more people that completed college there are. Basically, more high school graduates and college-goers tend to contribute to a lower unemployment rate in Texas counties!*
+
+*The second plot shows the relationship between the percentage of people who owns a bachelor's degree to the percentage of Asians in a particular county as well as the percentage of high school graduates in that same particular area. The observable trend is that the higher percentage of people who have bachelor degrees in a particular county positively correlates to a higher percentage of Asians as well as a higher percentage of high school graduates.*
+
+
+##### Dimensionality Reduction 
+```{R}
+#Processing Data and Choosing Cluster
+library(cluster)
+pam1<-cnty %>% select(-County) %>% select(-HSGrad) %>% 
+  select(-BSDegree) %>% select(-Unemployed)
+pam1
+
+pam1<-cnty%>%pam(2)
+pam1
+
+final <- cnty%>%mutate(cluster=as.factor(pam1$clustering))
+final_cnty <- final%>%group_by(County) %>% count(cluster) %>% arrange(desc(n))%>%
+pivot_wider(names_from="cluster",values_from="n",values_fill = list('n'=0))
+
+#Visualizing White and African variables in clusters based on 2 variables
+library(ggplot2)
+ggplot(final, aes(x=White,y= AfricanAmerican, color=cluster))+geom_point()
+
+#Visualizing All 4 Variables Againsts One Another
+library(GGally)
+final_cnty <- final %>% select(-County)
+ggpairs(final_cnty, columns=1:4)
+
+#Average silhouette width
+plot(pam1,which=2)
+
+#I referenced the sample codes from lecture for some of the code lines above^
+```
+*After performing PAM clustering on 7 variables for race above. I used the silhouette width to determine the appropriate amount of clusters with PAM. The resulting amount of clusters was 2. When visualizing the white populations against the African American populationin a cluster of 2 variables, there looks to be very little variation between these two variables as all the clusters are all going in one direction. I then tried comparing four variables (White, African American, Asian, and Native American) against one another and saw the largest negative correlation between the White and African American populations and the largest positive correlation between the White and Hispanic populations. The weakest correlation was between the Native American and Hispanic population. I then did an average silhouette width analysis to see if any of my pam clusters are significant. The resulting graph shows that both of my clusters are reasonable, but not strong enough to make a hard conclusion. *
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

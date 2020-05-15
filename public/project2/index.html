@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Kevin Le" />
+    <meta name="description" content="Portfolio website for SDS 348 Computational Biology">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.ico">
+    <title>Project 2: Modeling, Testing, and Predicting</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../blog/">BLOG</a></li>
+        
+        <li><a href="../projects/">PROJECTS</a></li>
+        
+        <li><a href="../resume.pdf">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../project2/">Project 2: Modeling, Testing, and Predicting</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          May 1, 2020
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<ol start="0" style="list-style-type: decimal">
+<li>(5 pts) Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?</li>
+</ol>
+<pre class="r"><code>#My Data 
+library(boot)
+view(aids)
+aids &lt;- aids
+aids2&lt;-aids</code></pre>
+<p><em>The data that I chose for this project is a dataset called “aids” which deals with the delays in AIDS reporting in England and Wales. The dataset contains records about the reported cases of AIDS diagnosed from July 1983 to the end of 1992. There are 6 variables in this dataset: year, quarter, delay, dud, and time. “year” is a categorical variable that lists the year of the particular case. “quarter” is a categorial variable that represents which quarter of the year the case occured in (although the observarions are a number from 1-4, the nature of this variable is moreso categorical since standard arithmatic cannot be performed on it). “delay” is a numerical variable that reports the time delay in months between diagnosis. “dud” is a binary variable that indicates whether censoring of report information occured (0 = no censoring occured, 1 = censoring occured). “time” is the time interval of the diagnosis, that is the number of quarters from July 1983 until the end of the quarter in which these cases were diagnosed. “y” is the number of AIDS cases reported.</em></p>
+<ol style="list-style-type: decimal">
+<li>(15 pts) Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all doesn’t make sense) show a mean difference across levels of one of your categorical variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3). Briefly discuss assumptions and whether or not they are likely to have been met (2).</li>
+</ol>
+<pre class="r"><code>#MANOVA
+MANOVA.aids&lt;-manova(cbind(delay,time,y)~year, data=aids)
+summary(MANOVA.aids)</code></pre>
+<pre><code>## Df Pillai approx F num Df den Df Pr(&gt;F)
+## year 1 0.9897 18137 3 566 &lt; 2.2e-16 ***
+## Residuals 568
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>#Univariate ANOVAs
+summary.aov(MANOVA.aids)</code></pre>
+<pre><code>## Response delay :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## year 1 0 0.00 0 1
+## Residuals 568 94199 165.84
+##
+## Response time :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## year 1 67836 67836 54558 &lt; 2.2e-16 ***
+## Residuals 568 706 1
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Response y :
+## Df Sum Sq Mean Sq F value Pr(&gt;F)
+## year 1 21126 21126.4 34.809 6.253e-09 ***
+## Residuals 568 344733 606.9
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1</code></pre>
+<pre class="r"><code>#Post-Hoc T-Tests
+aids%&gt;%group_by(year)%&gt;%summarize(mean(delay),mean(time), mean(y))</code></pre>
+<pre><code>## # A tibble: 10 x 4
+##     year `mean(delay)` `mean(time)` `mean(y)`
+##    &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;     &lt;dbl&gt;
+##  1  1983          20.1          1.5      0.8 
+##  2  1984          20.1          4.5      1.63
+##  3  1985          20.1          8.5      3.58
+##  4  1986          20.1         12.5      7.18
+##  5  1987          20.1         16.5     10.0 
+##  6  1988          20.1         20.5     13.6 
+##  7  1989          20.1         24.5     15.5 
+##  8  1990          20.1         28.5     17.8 
+##  9  1991          20.1         32.5     18.3 
+## 10  1992          20.1         36.5     17.2</code></pre>
+<pre class="r"><code>pairwise.t.test(aids$delay,aids$year,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  aids$delay and aids$year 
+## 
+##      1983 1984 1985 1986 1987 1988 1989 1990 1991
+## 1984 1    -    -    -    -    -    -    -    -   
+## 1985 1    1    -    -    -    -    -    -    -   
+## 1986 1    1    1    -    -    -    -    -    -   
+## 1987 1    1    1    1    -    -    -    -    -   
+## 1988 1    1    1    1    1    -    -    -    -   
+## 1989 1    1    1    1    1    1    -    -    -   
+## 1990 1    1    1    1    1    1    1    -    -   
+## 1991 1    1    1    1    1    1    1    1    -   
+## 1992 1    1    1    1    1    1    1    1    1   
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(aids$time,aids$year,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: aids$time and aids$year
+##
+## 1983 1984 1985 1986 1987 1988 1989 1990 1991
+## 1984 &lt;2e-16 - - - - - - - -
+## 1985 &lt;2e-16 &lt;2e-16 - - - - - - -
+## 1986 &lt;2e-16 &lt;2e-16 &lt;2e-16 - - - - - -
+## 1987 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 - - - - -
+## 1988 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 - - - -
+## 1989 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 - - -
+## 1990 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 -
+-
+## 1991 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16
+&lt;2e-16 -
+## 1992 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16 &lt;2e-16
+&lt;2e-16 &lt;2e-16
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(aids$y,aids$year,p.adj=&quot;none&quot;)</code></pre>
+<pre><code>##
+## Pairwise comparisons using t tests with pooled SD
+##
+## data: aids$y and aids$year
+##
+## 1983 1984 1985 1986 1987 1988 1989 1990 1991
+## 1984 0.88041 - - - - - - - -
+## 1985 0.61535 0.66636 - - - - - - -
+## 1986 0.24941 0.22006 0.42615 - - - - - -
+## 1987 0.09652 0.06419 0.15525 0.53106 - - - - -
+## 1988 0.02148 0.00853 0.02762 0.15848 0.43260 - - - -
+## 1989 0.00822 0.00229 0.00871 0.06687 0.22705 0.67173 - -
+-
+## 1990 0.00217 0.00036 0.00169 0.01863 0.08367 0.34377
+0.60080 - -
+## 1991 0.00166 0.00025 0.00120 0.01423 0.06742 0.29551
+0.53348 0.92074 -
+## 1992 0.00312 0.00060 0.00265 0.02660 0.11095 0.41764
+0.69881 0.89154 0.81355
+##
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>#Type 1 Errors
+1-.95^(17)</code></pre>
+<pre><code>## [1] 0.5818797</code></pre>
+<pre class="r"><code>##Bonferroni Correction
+0.5/17</code></pre>
+<pre><code>## [1] 0.02941176</code></pre>
+<p><em>The MANOVA results show a really small P-value of 2.2e-16 which means that there’s a significant mean difference between the numerical variables. The univariate ANOVAs showed that “time” and “y” both significant differ by year.I conducted 17 total hypothesis tests (1 MANOVA, 3 ANOVA, 12 T-tests), so the probability of getting a Type 1 error is 58.18797%. To adjust for this, the Bonferroni Correction was implemented to get a new significance level of 0.02941176. All post hoc tests that were significant before the adjustment remained significant after the Bonferroni adjustment. The MANOVA test that was ran most likely violated at least one of the many assumptions for MANOVA.</em></p>
+<ol start="2" style="list-style-type: decimal">
+<li>(10 pts) Perform some kind of randomization test on your data (that makes sense). This can be anything you want! State null and alternative hypotheses, perform the test, and interpret the results (7). Create a plot visualizing the null distribution and the test statistic (3).</li>
+</ol>
+<pre class="r"><code>##Ho: The differences between dud and delay are due to chance
+##H1: The difference between dud and delay are NOT due to chance 
+
+#Randomization Test for Delay 
+aids%&gt;%group_by(dud)%&gt;%summarize(s=sd(delay))%&gt;%summarize(diff(s))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `diff(s)`
+##       &lt;dbl&gt;
+## 1     -2.48</code></pre>
+<pre class="r"><code>rand_dist&lt;-vector()
+for(i in 1:5000){
+new&lt;-data.frame(delay=sample(aids$delay),dud=aids$dud)
+rand_dist[i]&lt;-mean(new[new$dud==&quot;1&quot;,]$delay)-
+mean(new[new$dud==&quot;0&quot;,]$delay)}
+mean(rand_dist &lt; -2.481883 | rand_dist &gt; 2.481883)</code></pre>
+<pre><code>## [1] 0.0828</code></pre>
+<pre class="r"><code>#Plot of Distribution
+{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = -2.481883,col=&quot;red&quot;)}</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /> <em>I wanted to see if the differences between the censoring (dud) and delay was due to chance. The p-value for the randomization test ended up being 0.0684, so I fail to reject the null hypothesis and the differences between dud and delay are due to chance only. I thought it would have been interesting to see if censoring had any significant relationship to how delayed reporting was.</em></p>
+<ol start="3" style="list-style-type: decimal">
+<li>(35 pts) Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction. – Interpret the coefficient estimates (do not discuss significance) (10) – Plot the regression using ggplot(). If your interaction is numeric by numeric, refer to code near the end of WS15 to make the plot. If you have 3 or more predictors, just chose two to plot for convenience. (8) – Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test (4) – Regardless, recompute regression results with robust standard errors via coeftest(…, vcov=vcovHC(…)). Discuss significance of results, including any changes from before/after robust SEs if applicable. (8) – What proportion of the variation in the outcome does your model explain? (4)</li>
+</ol>
+<pre class="r"><code>#Mean Centering Data 
+aids$delay_c &lt;- aids$delay - mean(aids$delay)
+aids$time_c &lt;- aids$time - mean(aids$time)
+
+#Linear Regression 
+fit&lt;-lm(y ~ delay_c*time_c, data=aids)
+summary(fit)</code></pre>
+<pre><code>##
+## Call:
+## lm(formula = y ~ delay_c * time_c, data = aids)
+##
+## Residuals:
+## Min 1Q Median 3Q Max
+## -52.732 -7.697 -1.832 2.972 124.062
+##
+## Coefficients:
+## Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 11.078947 0.809413 13.688 &lt; 2e-16 ***
+## delay_c -1.002776 0.062963 -15.927 &lt; 2e-16 ***
+## time_c 0.552555 0.073812 7.486 2.74e-13 ***
+## delay_c:time_c -0.058560 0.005742 -10.199 &lt; 2e-16 ***
+## ---
+## Signif. codes: 0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1
+&#39; &#39; 1
+##
+## Residual standard error: 19.32 on 566 degrees of freedom
+## Multiple R-squared: 0.4223, Adjusted R-squared: 0.4192
+## F-statistic: 137.9 on 3 and 566 DF, p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Regression Plot 
+library(ggplot2)
+
+aids1&lt;-aids
+aids1$delay_c&lt;-mean(aids1$delay_c)
+aids1$mean&lt;-predict(fit,aids1)
+aids1$delay_c&lt;-mean(aids1$delay_c)+sd(aids1$delay_c)
+aids1$plus.sd&lt;-predict(fit,aids1)
+aids1$delay_c&lt;-mean(aids1$delay_c)-sd(aids1$delay_c)
+aids1$minus.sd&lt;-predict(fit,aids1)
+newint&lt;-aids1%&gt;%select(y,time_c,mean,plus.sd,minus.sd)%&gt;%gather(delay,value,-y,-time_c)
+
+mycols&lt;-c(&quot;#fc3903&quot;,&quot;#0ccf74&quot;,&quot;#2f46ed&quot;)
+names(mycols)&lt;-c(&quot;-1 sd&quot;,&quot;mean&quot;,&quot;+1 sd&quot;)
+mycols=as.factor(mycols)
+
+ggplot(aids1,aes(time_c,y),group=mycols)+geom_point()+geom_line(data=aids1,aes(y=mean,color=&quot;mean&quot;))+geom_line(data=aids1,aes(y=plus.sd,color=&quot;+1 sd&quot;))+geom_line(data=aids1,aes(y=minus.sd,color=&quot;-1 sd&quot;))+scale_color_manual(values=mycols)+labs(color=&quot;Delay (cont)&quot;)+theme(legend.position=c(.9,.2))</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Linearity
+resids&lt;-fit$residuals
+fitvals&lt;-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Normality
+ggplot()+geom_histogram(aes(resids), bins=20)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-4-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, mean=0, sd(resids)) #ho: true distribution is normal ---- its not, unfortunately</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.19598, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>#Homoskedasticity 
+library(sandwich)
+library(lmtest)
+bptest(fit) #H0: homoskedastic -- not homoskedastic </code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit
+## BP = 104.71, df = 3, p-value &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Uncorrected SEs
+summary(fit)$coef[,1:2]</code></pre>
+<pre><code>##                   Estimate  Std. Error
+## (Intercept)    11.07894737 0.809412925
+## delay_c        -1.00277638 0.062962700
+## time_c          0.55255498 0.073812105
+## delay_c:time_c -0.05855976 0.005741704</code></pre>
+<pre class="r"><code>#Robust SEs
+coeftest(fit, vcov = vcovHC(fit))[,1:2]</code></pre>
+<pre><code>##                   Estimate  Std. Error
+## (Intercept)    11.07894737 0.815201695
+## delay_c        -1.00277638 0.081438466
+## time_c          0.55255498 0.085543057
+## delay_c:time_c -0.05855976 0.008320274</code></pre>
+<pre class="r"><code>#Proportion of Variation in Model
+(sum((aids$y-mean(aids$y))^2)-sum(fit$residuals^2))/sum((aids$y-mean(aids$y))^2)</code></pre>
+<pre><code>## [1] 0.4222802</code></pre>
+<p><em>In the linear regression, the cases with a fixed average diagnosis interval time (time_c), a 1 unit increase in average delay in reporting (delay_c) results in a -1.002776 unit decrease of the number of AIDS cases reported (y). With a fixed average delay in reporting (delay_c), a 1 unit increase in the average diagnosis interval time (time_c) results in a 0.552555 unit increase in the average number of AIDS cases reported (y). Looking at the interaction effects between the average delay in reporting &amp; the average diagnosis interval time, a one unit increase in this interaction leads to a -0.05856 unit decrease in number of AIDS cases reported.</em> <em>After running tests for linearity, normality, and homoskedasticity, all of them failed unfortunately due to high p-values or non-normal graphs. So the assumptions of the linear regression have not been met, unfortunately.</em> <em>Correcting the standard errors in the linear regression ended up increasing the standard errors. 42.22802% of the variation in the outcome is explained by the model.</em></p>
+<ol start="4" style="list-style-type: decimal">
+<li>(5 pts) Rerun same regression model (with interaction), but this time compute bootstrapped standard errors. Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)</li>
+</ol>
+<pre class="r"><code>#Bootstrapping
+samp_distn&lt;-replicate(5000, {
+  boot_aids&lt;-boot_aids&lt;-aids[sample(nrow(aids),replace=TRUE),]
+  bootfit&lt;-lm(y ~ delay_c*time_c, data=boot_aids)
+  coef(bootfit)
+})
+
+#Estimated SEs
+samp_distn%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)    delay_c     time_c delay_c:time_c
+## 1   0.8237219 0.08240714 0.08686867    0.008502204</code></pre>
+<p><em>Compared to the original SEs and robust SEs from the previous question, the SEs from bootstrapping ended up being slightly lower!</em></p>
+<ol start="5" style="list-style-type: decimal">
+<li>(40 pts) Perform a logistic regression predicting a binary categorical variable (if you don’t have one, make/get one) from at least two explanatory variables (interaction not necessary). – Interpret coefficient estimates in context (10) – Report a confusion matrix for your logistic regression (2) – Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), and Recall (PPV) of your model (5) – Using ggplot, plot density of log-odds (logit) by your binary outcome variable (3) – Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret</li>
+</ol>
+<ol start="10" style="list-style-type: decimal">
+<li>– Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy, Sensitivity, and Recall (10)</li>
+</ol>
+<pre class="r"><code>#Logistic Regression 
+fit2&lt;-glm(dud~year+y,data=aids,family=binomial(link=&quot;logit&quot;))
+exp(coeftest(fit2))</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate  Std. Error  z value Pr(&gt;|z|)
+## (Intercept)  0.0000e+00 3.2884e+307   0.0011        1
+## year         1.1422e+01  1.4274e+00 938.8215        1
+## y            7.3596e-01  1.0610e+00   0.0057        1</code></pre>
+<pre class="r"><code>#Confusion Matrix
+aids$prob&lt;-predict(fit2,type=&quot;response&quot;)
+aids$predicted&lt;-ifelse(aids$prob&gt;.5,&quot;0&quot;,&quot;1&quot;) 
+aids$outcome&lt;-factor(aids$dud,levels=c(&quot;0&quot;,&quot;1&quot;))
+table(truth=aids$outcome, prediction=aids$predicted)%&gt;%addmargins</code></pre>
+<pre><code>##      prediction
+## truth   0   1 Sum
+##   0     7 458 465
+##   1   101   4 105
+##   Sum 108 462 570</code></pre>
+<pre class="r"><code>(7+4)/570 #Accuracy</code></pre>
+<pre><code>## [1] 0.01929825</code></pre>
+<pre class="r"><code>4/105 #TPR</code></pre>
+<pre><code>## [1] 0.03809524</code></pre>
+<pre class="r"><code>7/465 #TNR </code></pre>
+<pre><code>## [1] 0.01505376</code></pre>
+<pre class="r"><code>7/108 #PPV</code></pre>
+<pre><code>## [1] 0.06481481</code></pre>
+<pre class="r"><code>#Plot of Density of Log-Odds 
+aids$logit&lt;-predict(fit2) 
+ggplot(aids,aes(logit, fill=outcome))+geom_density(alpha=.5)+
+  geom_vline(xintercept=0,lty=2)</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#ROC and AUC 
+library(plotROC)
+ROCplot&lt;-ggplot(fit2)+geom_roc(aes(d=dud,m=year), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="../project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.9513057</code></pre>
+<pre class="r"><code>#10 Fold CV
+prob&lt;-predict(fit2,type=&quot;response&quot;)
+
+##Defining class_diag function
+class_diag &lt;- function(probs,truth){
+tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+ord&lt;-order(probs, decreasing=TRUE)
+probs &lt;- probs[ord]; truth &lt;- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+n &lt;- length(TPR)
+auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+class_diag(prob,aids$dud)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.9807018 0.9619048 0.9849462 0.9351852 0.9884997</code></pre>
+<pre class="r"><code>set.seed(1234)
+k=10 
+data&lt;-aids[sample(nrow(aids)),] 
+folds&lt;-cut(seq(1:nrow(aids)),breaks=k,labels=F)
+diags&lt;-NULL
+for(i in 1:k){
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$dud
+fit3&lt;-glm(dud~year+y,data=train,family=&quot;binomial&quot;)
+probs&lt;-predict(fit3,newdata = test,type=&quot;response&quot;)
+diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)</code></pre>
+<pre><code>##         acc      sens      spec       ppv       auc
+## 1 0.9807018 0.9541667 0.9851223 0.9386869 0.9838209</code></pre>
+<p><em>In the logistic regression, with number of AIDS cases reported (y) fixed, every one unit increase in year multiplies odds by 11.422. With year fixed, every one unit increase in the number of AIDS cases reported multiplies odds by 0.73596.</em> <em>The AUC from the ROC is super high at 0.9513057 which is really great! This means that there is a higher predicted probability that censoring did happen than compared to it not happening.</em> <em>After running the 10 fold CV, the out-of-sample accuracy is 0.9807018, the sensitivity is 0.9541667, specificity is 0.9851223, and the AUC is 0.9838209 (which is great!)</em></p>
+<ol start="6" style="list-style-type: decimal">
+<li>(10 pts) Choose one variable you want to predict (can be one you used from before; either binary or continuous) and run a LASSO regression inputting all the rest of your variables as predictors. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., lambda.1se). Discuss which variables are retained. Perform 10-fold CV using this model: if response in binary, compare model’s out-of-sample accuracy to that of your logistic regression in part 5; if response is numeric, compare the residual standard error (at the bottom of the summary output, aka RMSE): lower is better fit!</li>
+</ol>
+<pre class="r"><code>#LASSO Regression 
+library(glmnet)
+y&lt;-as.matrix(aids$time)
+x&lt;-model.matrix(time~.,data=aids)[,-1] 
+x&lt;-scale(x)
+
+cv&lt;-cv.glmnet(x,y)
+lasso&lt;-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                     s0
+## (Intercept) 19.5000000
+## year         0.1526113
+## quarter      .        
+## delay        .        
+## dud          .        
+## y            .        
+## delay_c      .        
+## time_c      10.4725298
+## prob         .        
+## predicted1   .        
+## outcome1     .        
+## logit        .</code></pre>
+<pre class="r"><code>#10 Fold CV with Time and Year 
+set.seed(1234)
+k=10 #choose number of folds
+data1&lt;-aids[sample(nrow(aids)),] #randomly order rows
+folds1&lt;-cut(seq(1:nrow(aids)),breaks=k,labels=F) #create folds
+diags1&lt;-NULL
+for(i in 1:k){
+train1&lt;-data1[folds1!=i,]
+test1&lt;-data1[folds1==i,]
+fit4&lt;-lm(time~year,data=train1)
+probs1&lt;-predict(fit4,newdata=test1)
+diags1&lt;-mean((test1$time-probs1)^2)
+}
+mean(diags1)</code></pre>
+<pre><code>## [1] 1.001608</code></pre>
+<p><em>After running a LASSO regression with length of diagnostic interval (time) as the response variable, the only variable that was retained was year. This means that the year in which the case occured is the most predictive variable!</em> <em>After running the 10 fold CV, the CV prediction error (MSE) is only 1.001608 which is pretty low! So there’s likely no sign of overfitting, and this model will make more accurate predictions</em></p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../js/docs.min.js"></script>
+<script src="../js/main.js"></script>
+
+<script src="../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

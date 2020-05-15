@@ -1,0 +1,302 @@
+---
+title: 'Project 2: Modeling, Testing, and Predicting'
+author: "Kevin Le (KTL539)"
+date: "2020-05-1"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,fig.align="center",warning=FALSE,message=FALSE,fig.width=8, fig.height=5, linewidth=60)
+options(tibble.width = 100,width = 100)
+library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(devtools)
+library(ggplot2)
+```
+
+0. (5 pts) Introduce your dataset and each of your variables (or just your main variables if you have
+lots) in a paragraph. What are they measuring? How many observations?
+```{R}
+#My Data 
+library(boot)
+view(aids)
+aids <- aids
+aids2<-aids
+```
+*The data that I chose for this project is a dataset called "aids" which deals with the delays in AIDS reporting in England and Wales. The dataset contains records about the reported cases of AIDS diagnosed from July 1983 to the end of 1992. There are 6 variables in this dataset: year, quarter, delay, dud, and time. "year" is a categorical variable that lists the year of the particular case. "quarter" is a categorial variable that represents which quarter of the year the case occured in (although the observarions are a number from 1-4, the nature of this variable is moreso categorical since standard arithmatic cannot be performed on it). "delay" is a numerical variable that reports the time delay in months between diagnosis. "dud" is a binary variable that indicates whether censoring of report information occured (0 = no censoring occured, 1 = censoring occured). "time" is the time interval of the diagnosis, that is the number of quarters from July 1983 until the end of the quarter in which these cases were diagnosed. "y" is the number of AIDS cases reported.*
+
+
+1. (15 pts) Perform a MANOVA testing whether any of your numeric variables (or a subset of them,
+if including them all doesn’t make sense) show a mean difference across levels of one of your categorical
+variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference
+across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of
+tests you have performed, calculate the probability of at least one type I error (if unadjusted), and
+adjust the significance level accordingly (bonferroni correction) before discussing significant differences
+(3). Briefly discuss assumptions and whether or not they are likely to have been met (2).
+```{R}
+#MANOVA
+MANOVA.aids<-manova(cbind(delay,time,y)~year, data=aids)
+summary(MANOVA.aids)
+
+#Univariate ANOVAs
+summary.aov(MANOVA.aids)
+
+#Post-Hoc T-Tests
+aids%>%group_by(year)%>%summarize(mean(delay),mean(time), mean(y))
+pairwise.t.test(aids$delay,aids$year,p.adj="none")
+pairwise.t.test(aids$time,aids$year,p.adj="none")
+pairwise.t.test(aids$y,aids$year,p.adj="none")
+
+#Type 1 Errors
+1-.95^(17)
+
+##Bonferroni Correction
+0.5/17
+```
+*The MANOVA results show a really small P-value of 2.2e-16 which means that there's a significant mean difference between the numerical variables. The univariate ANOVAs showed that "time" and "y"  both significant differ by year.I conducted 17 total hypothesis tests (1 MANOVA, 3 ANOVA, 12 T-tests), so the probability of getting a Type 1 error is 58.18797%. To adjust for this, the Bonferroni Correction was implemented to get a new significance level of  0.02941176. All post hoc tests that were significant before the adjustment remained significant after the Bonferroni adjustment. The MANOVA test that was ran most likely violated at least one of the many assumptions for MANOVA.*
+
+
+2. (10 pts) Perform some kind of randomization test on your data (that makes sense). This can be
+anything you want! State null and alternative hypotheses, perform the test, and interpret the results
+(7). Create a plot visualizing the null distribution and the test statistic (3).
+```{R}
+##Ho: The differences between dud and delay are due to chance
+##H1: The difference between dud and delay are NOT due to chance 
+
+#Randomization Test for Delay 
+aids%>%group_by(dud)%>%summarize(s=sd(delay))%>%summarize(diff(s))
+
+rand_dist<-vector()
+for(i in 1:5000){
+new<-data.frame(delay=sample(aids$delay),dud=aids$dud)
+rand_dist[i]<-mean(new[new$dud=="1",]$delay)-
+mean(new[new$dud=="0",]$delay)}
+mean(rand_dist < -2.481883 | rand_dist > 2.481883)
+
+#Plot of Distribution
+{hist(rand_dist,main="",ylab=""); abline(v = -2.481883,col="red")}
+```
+*I wanted to see if the differences between the censoring (dud) and delay was due to chance. The p-value for the randomization test ended up being 0.0684, so I fail to reject the null hypothesis and the differences between dud and delay are due to chance only. I thought it would have been interesting to see if censoring had any significant relationship to how delayed reporting was.*
+
+3. (35 pts) Build a linear regression model predicting one of your response variables from at least
+2 other variables, including their interaction. Mean-center any numeric variables involved in the
+interaction.
+– Interpret the coefficient estimates (do not discuss significance) (10)
+– Plot the regression using ggplot(). If your interaction is numeric by numeric, refer to code near
+the end of WS15 to make the plot. If you have 3 or more predictors, just chose two to plot for
+convenience. (8)
+– Check assumptions of linearity, normality, and homoskedasticity either graphically or using a
+hypothesis test (4)
+– Regardless, recompute regression results with robust standard errors via coeftest(...,
+vcov=vcovHC(...)). Discuss significance of results, including any changes from before/after
+robust SEs if applicable. (8)
+– What proportion of the variation in the outcome does your model explain? (4)
+```{R}
+#Mean Centering Data 
+aids$delay_c <- aids$delay - mean(aids$delay)
+aids$time_c <- aids$time - mean(aids$time)
+
+#Linear Regression 
+fit<-lm(y ~ delay_c*time_c, data=aids)
+summary(fit)
+
+#Regression Plot 
+library(ggplot2)
+
+aids1<-aids
+aids1$delay_c<-mean(aids1$delay_c)
+aids1$mean<-predict(fit,aids1)
+aids1$delay_c<-mean(aids1$delay_c)+sd(aids1$delay_c)
+aids1$plus.sd<-predict(fit,aids1)
+aids1$delay_c<-mean(aids1$delay_c)-sd(aids1$delay_c)
+aids1$minus.sd<-predict(fit,aids1)
+newint<-aids1%>%select(y,time_c,mean,plus.sd,minus.sd)%>%gather(delay,value,-y,-time_c)
+
+mycols<-c("#fc3903","#0ccf74","#2f46ed")
+names(mycols)<-c("-1 sd","mean","+1 sd")
+mycols=as.factor(mycols)
+
+ggplot(aids1,aes(time_c,y),group=mycols)+geom_point()+geom_line(data=aids1,aes(y=mean,color="mean"))+geom_line(data=aids1,aes(y=plus.sd,color="+1 sd"))+geom_line(data=aids1,aes(y=minus.sd,color="-1 sd"))+scale_color_manual(values=mycols)+labs(color="Delay (cont)")+theme(legend.position=c(.9,.2))
+
+#Linearity
+resids<-fit$residuals
+fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+
+#Normality
+ggplot()+geom_histogram(aes(resids), bins=20)
+ks.test(resids, "pnorm", mean=0, sd(resids)) #ho: true distribution is normal ---- its not, unfortunately
+
+#Homoskedasticity 
+library(sandwich)
+library(lmtest)
+bptest(fit) #H0: homoskedastic -- not homoskedastic 
+
+#Uncorrected SEs
+summary(fit)$coef[,1:2]
+
+#Robust SEs
+coeftest(fit, vcov = vcovHC(fit))[,1:2]
+
+#Proportion of Variation in Model
+(sum((aids$y-mean(aids$y))^2)-sum(fit$residuals^2))/sum((aids$y-mean(aids$y))^2)
+```
+*In the linear regression, the cases with a fixed average diagnosis interval time (time_c), a 1 unit increase in average delay in reporting (delay_c) results in a -1.002776 unit decrease of the number of AIDS cases reported (y). With a fixed average delay in reporting (delay_c), a 1 unit increase in the average diagnosis interval time (time_c) results in a 0.552555 unit increase in the average number of AIDS cases reported (y). Looking at the interaction effects between the average delay in reporting & the average diagnosis interval time, a one unit increase in this interaction leads to a -0.05856 unit decrease in number of AIDS cases reported.*
+*After running tests for linearity, normality, and homoskedasticity, all of them failed unfortunately due to high p-values or non-normal graphs. So the assumptions of the linear regression have not been met, unfortunately.*
+*Correcting the standard errors in the linear regression ended up increasing the standard errors. 42.22802% of the variation in the outcome is explained by the model.*
+
+4. (5 pts) Rerun same regression model (with interaction), but this time compute bootstrapped
+standard errors. Discuss any changes you observe in SEs and p-values using these SEs compared to the
+original SEs and the robust SEs)
+```{R}
+#Bootstrapping
+samp_distn<-replicate(5000, {
+  boot_aids<-boot_aids<-aids[sample(nrow(aids),replace=TRUE),]
+  bootfit<-lm(y ~ delay_c*time_c, data=boot_aids)
+  coef(bootfit)
+})
+
+#Estimated SEs
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+```
+*Compared to the original SEs and robust SEs from the previous question, the SEs from bootstrapping ended up being slightly lower!*
+
+5. (40 pts) Perform a logistic regression predicting a binary categorical variable (if you don’t have
+one, make/get one) from at least two explanatory variables (interaction not necessary).
+– Interpret coefficient estimates in context (10)
+– Report a confusion matrix for your logistic regression (2)
+– Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), and Recall (PPV) of
+your model (5)
+– Using ggplot, plot density of log-odds (logit) by your binary outcome variable (3)
+– Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret
+(10)
+– Perform 10-fold (or repeated random sub-sampling) CV and report average out-of-sample Accuracy,
+Sensitivity, and Recall (10)
+```{R}
+#Logistic Regression 
+fit2<-glm(dud~year+y,data=aids,family=binomial(link="logit"))
+exp(coeftest(fit2))
+
+#Confusion Matrix
+aids$prob<-predict(fit2,type="response")
+aids$predicted<-ifelse(aids$prob>.5,"0","1") 
+aids$outcome<-factor(aids$dud,levels=c("0","1"))
+table(truth=aids$outcome, prediction=aids$predicted)%>%addmargins
+
+(7+4)/570 #Accuracy
+4/105 #TPR
+7/465 #TNR 
+7/108 #PPV
+
+#Plot of Density of Log-Odds 
+aids$logit<-predict(fit2) 
+ggplot(aids,aes(logit, fill=outcome))+geom_density(alpha=.5)+
+  geom_vline(xintercept=0,lty=2)
+
+#ROC and AUC 
+library(plotROC)
+ROCplot<-ggplot(fit2)+geom_roc(aes(d=dud,m=year), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+
+#10 Fold CV
+prob<-predict(fit2,type="response")
+
+##Defining class_diag function
+class_diag <- function(probs,truth){
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc)
+}
+
+class_diag(prob,aids$dud)
+
+set.seed(1234)
+k=10 
+data<-aids[sample(nrow(aids)),] 
+folds<-cut(seq(1:nrow(aids)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$dud
+fit3<-glm(dud~year+y,data=train,family="binomial")
+probs<-predict(fit3,newdata = test,type="response")
+diags<-rbind(diags,class_diag(probs,truth))
+}
+summarize_all(diags,mean)
+```
+*In the logistic regression, with number of AIDS cases reported (y) fixed, every one unit increase in year multiplies odds by 11.422. With year fixed, every one unit increase in the number of AIDS cases reported multiplies odds by 0.73596.*
+*The AUC from the ROC is super high at 0.9513057 which is really great! This means that there is a higher predicted probability that censoring did happen than compared to it not happening.*
+*After running the 10 fold CV, the out-of-sample accuracy is 0.9807018, the sensitivity is 0.9541667, specificity is 0.9851223, and the AUC is 0.9838209 (which is great!)*
+
+
+6. (10 pts) Choose one variable you want to predict (can be one you used from before; either binary or
+continuous) and run a LASSO regression inputting all the rest of your variables as predictors. Choose
+lambda to give the simplest model whose accuracy is near that of the best (i.e., lambda.1se). Discuss
+which variables are retained. Perform 10-fold CV using this model: if response in binary, compare
+model’s out-of-sample accuracy to that of your logistic regression in part 5; if response is numeric,
+compare the residual standard error (at the bottom of the summary output, aka RMSE): lower is better
+fit!
+```{R}
+#LASSO Regression 
+library(glmnet)
+y<-as.matrix(aids$time)
+x<-model.matrix(time~.,data=aids)[,-1] 
+x<-scale(x)
+
+cv<-cv.glmnet(x,y)
+lasso<-glmnet(x,y,lambda=cv$lambda.1se)
+coef(lasso)
+
+#10 Fold CV with Time and Year 
+set.seed(1234)
+k=10 #choose number of folds
+data1<-aids[sample(nrow(aids)),] #randomly order rows
+folds1<-cut(seq(1:nrow(aids)),breaks=k,labels=F) #create folds
+diags1<-NULL
+for(i in 1:k){
+train1<-data1[folds1!=i,]
+test1<-data1[folds1==i,]
+fit4<-lm(time~year,data=train1)
+probs1<-predict(fit4,newdata=test1)
+diags1<-mean((test1$time-probs1)^2)
+}
+mean(diags1)
+```
+*After running a LASSO regression with length of diagnostic interval (time) as the response variable, the only variable that was retained was year. This means that the year in which the case occured is the most predictive variable!*
+*After running the 10 fold CV, the CV prediction error (MSE) is only 1.001608 which is pretty low! So there's likely no sign of overfitting, and this model will make more accurate predictions*
