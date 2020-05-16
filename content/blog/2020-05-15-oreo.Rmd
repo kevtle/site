@@ -1,5 +1,5 @@
 ---
-title: OREO
+title: OREO & Python 
 author: ''
 date: '2020-05-15'
 slug: oreo
@@ -7,4 +7,98 @@ categories: []
 tags: []
 description: ''
 ---
+
+## I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!
+
 ![](/blog/2020-05-15-oreo_files/kqibcu69xm721.jpg)
+
+
+
+##So basically:
+
+##RE = Cream 
+##O = Cookie 
+
+##O + RE + O = an Oreo sandwich cookie
+
+#R Code Chunk
+```{R}
+library(reticulate)
+OREO <- "OREO"
+```
+
+#Python Code Chunk
+
+###I want 4 oreos!
+```{python}
+cookie = r.OREO
+print(cookie, cookie, cookie, cookie)
+```
+
+###Let's separate the top cookie off the rest of the oreo
+```{python}
+#Python Code Chunk 
+cookie[0] + '&' + ' ' + cookie[1:]
+```
+
+###I hate the cream! Lets take it out....
+```{python}
+cookie[0] + ' ' '&' ' ' + cookie[3]
+```
+
+###I want my Oreo to look like a Big Mac...
+```{python}
+2*cookie[0:3] + cookie[0]
+```
+
+###The Cookie Part = NASTY! :/ I just want the cream
+```{python}
+5*cookie[1:3]
+```
+
+###All cookie, no cream!
+```{python}
+cookie[0] + cookie[3] + cookie[0] + cookie[3] + cookie[0]
+```
+
+###A bottom heavy Oreo
+```{python}
+cookie[0:3] + 2*cookie[0]
+```
+
+###An Oreo Totem Pole 
+```{python}
+cookie + 3*cookie[1:3] + cookie[0:3]
+```
+
+###Another Oreo Totem Pole 
+```{python}
+cookie + cookie[1:4] + cookie[1:3]
+```
+
+###Double Stuffed Oreo (without its head)
+```{python}
+2*cookie[1:3]+cookie[0]
+```
+
+###An Inverted Oreo
+```{python}
+cookie[-3]+cookie[-2]+cookie[-1]+cookie[1:3]
+```
+
+###A Mega Stuffed Oreo!!!
+```{python}
+cookie[0:3]+8*cookie[1:3]+cookie[2:4]
+```
+
+###Oreo XL 
+```{python}
+3*cookie[0] + 6*cookie[1:3] + 3*cookie[0]
+```
+
+###A really tall Oreo
+```{python}
+cookie[0] + 4*cookie[1:3] + 9*cookie[0]
+```
+
+##There are so many ways to stack Oreos - it's crazy!!! 

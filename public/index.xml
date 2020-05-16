@@ -12,12 +12,32 @@
     
     
     <item>
-      <title>OREO</title>
+      <title>Get to Know More About Me!</title>
+      <link>/about/about/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/about/about/</guid>
+      <description>Hey y’all! My name’s Kevin and I’m a junior biology student at the University of Texas at Austin.  I’m currently pursuing a B.S.A. in Biology with a minor in studio art.  I am going to be applying to optometry school soon – so wish me luck! My career goal is to open up my own private practice eye clinic one day. I think eyes are super neat, and I am determined to work hard in order to better serve my community in the future.</description>
+    </item>
+    
+    <item>
+      <title>OREO &amp; Python</title>
       <link>/blog/oreo/</link>
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/oreo/</guid>
-      <description>  </description>
+      <description>I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!   So basically:  RE = Cream  O = Cookie  O + RE + O = an Oreo sandwich cookie  R Code Chunk library(reticulate) OREO &amp;lt;- &amp;quot;OREO&amp;quot;  Python Code Chunk I want 4 oreos! cookie = r.OREO print(cookie, cookie, cookie, cookie) ## (&amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;)  Let’s separate the top cookie off the rest of the oreo #Python Code Chunk cookie[0] + &amp;#39;&amp;amp;&amp;#39; + &amp;#39; &amp;#39; + cookie[1:] ## &amp;#39;O&amp;amp; REO&amp;#39;  I hate the cream!</description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/about/resume/</link>
+      <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/about/resume/</guid>
+      <description>RESUME Contact Info Email: le.kevin03@gmail.com
+github.com/kevtle
+  Education  Associates of Science at Richland College (2015-2017) Bachelors of Science and Arts at the University of Texas at Austin w/ Studio Art Minor (2017-Present)  Skills  Experienced in Photoshop, Illustrator, Lightroom, Procreate (for iPad), Canva, and Microsoft Office Loves to be creative whenever applicable! Moderately experienced with R Studio and Python :)   Experience  40 hours shadowing experience at Constant Eye Care with Dr.</description>
     </item>
     
     <item>

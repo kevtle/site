@@ -21,12 +21,7 @@ theme = "hugo-sustain"
 
 [params.social]
   Github        = "username"
-  Email         = "email@example.com"
-  Twitter       = "username"
-  LinkedIn      = "username"
-  Stackoverflow = "username"
-  Medium        = "username"
-  Telegram      = "username"
+  Email         = "le.kevin03@gmail.com"
 
 ## Main Menu
 [[menu.main]]
@@ -40,7 +35,7 @@ theme = "hugo-sustain"
   weight = 200
   url = "/projects/"
 [[menu.main]]
-  name = "resume"
-  identifier = "resume"
+  name = "about"
+  identifier = "about"
   weight = 300
-  url = "/resume.pdf"
+  url = "/about/"

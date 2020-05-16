@@ -1,0 +1,61 @@
+---
+title: "Resume"
+output: html_document
+categories:
+- about
+date: "2020-05-15"
+showpagemeta: false
+tags:
+- about
+---
+
+#RESUME 
+
+###Contact Info 
+Email: le.kevin03@gmail.com
+
+github.com/kevtle
+
+#Education
+- Associates of Science at Richland College (2015-2017)
+- Bachelors of Science and Arts at the University of Texas at Austin w/ Studio Art Minor (2017-Present)
+
+###Skills 
+- Experienced in Photoshop, Illustrator, Lightroom, Procreate (for iPad), Canva, and Microsoft Office
+- Loves to be creative whenever applicable!
+- Moderately experienced with R Studio and Python :)
+
+###Experience 
+- 40 hours shadowing experience at Constant Eye Care with Dr. Julie Vy Ngo (June 2018)
+- 7 hours shadowing experience at Southwest Dallas Eyecare with Dr. Steve Nguyen with heavy focus on glaucoma and ocular pathology (July 2019)
+
+###Academic Projects 
+PBH317 PrEP Awareness Project (Spring 2018)
+
+- Worked with on-campus health services to bring awareness to PrEP medication
+- Consulted with public health professional Dr. Marilyn Felkner to best broadcast survey and information
+
+Freshman Research Initiative – Dr. Moriah Sandy (Spring 2018)
+
+- Analyzed fungal strain Panicum hallii for possible natural products from metabolites 
+- Field work on fungi Juniperous ashei to screen for bioactive material to combat Oak Wilt fungi
+
+###Leadership Experience and Activities 
+
+Pre-Optometry Professional Society- President (2019-2020); Historian (2018-2019)
+
+- Provide mentorship, volunteer opportunities, and community-building for pre-optometry students at UT Austin.
+
+Students for Equity and Diversity - Director of Media (2019-2020)
+
+- Host events and provide resources related to social justice and diversity on campus.
+
+Students Making an Impact Through Love And Empathy (S.M.I.L.E.) - Project Coordination Committee (Spring 2019)
+
+- Raised $36,000 for pediatric cancer research at the annual Brave the Shave event. 
+
+
+###Awards and Scholarships 
+- Michael and Susan Dell Scholar (2017)
+- Presidential Achievement Scholarship (2017)
+

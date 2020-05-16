@@ -3,12 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/tags/about/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/categories/about/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
   </url>
   
   <url>
+    <loc>/categories/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/about/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/blog/oreo/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/about/resume/</loc>
+    <lastmod>2020-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
     <lastmod>2020-05-15T00:00:00+00:00</lastmod>
   </url>
   
@@ -28,11 +63,6 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2016-10-02T22:55:05-04:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/projects/</loc>
     <lastmod>2016-10-02T22:55:05-04:00</lastmod>
   </url>
@@ -44,11 +74,6 @@
   
   <url>
     <loc>/categories/projects/</loc>
-    <lastmod>2016-10-02T22:55:05-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2016-10-02T22:55:05-04:00</lastmod>
   </url>
   

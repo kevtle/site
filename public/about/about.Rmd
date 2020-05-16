@@ -1,0 +1,35 @@
+---
+title: "Get to Know More About Me!"
+output: html_document
+categories:
+- about
+date: "2020-05-15"
+showpagemeta: false
+tags:
+- about
+---
+
+##Hey y'all!
+
+#####My name's Kevin and I'm a junior biology student at the University of Texas at Austin. 
+
+#####I'm currently pursuing a B.S.A. in Biology with a minor in studio art. 
+#####I am going to be applying to optometry school soon -- so wish me luck! My career goal is to open up my own private practice eye clinic one day. I think eyes are super neat, and I am determined to work hard in order to better serve my community in the future. 
+
+#####Outside of academia, my passions include: drawing, painting, cooking, spending time with friends, and surfing the internet!
+
+#####Ever since the quarantine started, I've been cooking up a bunch of foods. I think I've become a part-time food blogger at this point. Here's a collage of some of the dishes I've made: 
+
+![](/about/about_files/food pic.png)
+
+#####Although I would really like to showcase a pet, I don't have any (yet) :(
+#####I dream of getting a dog one day, so in the meantime, please enjoy this picture of a maltese I found on the internet! 
+
+![](/about/about_files/9644b09c51b5a93f41da037ce0dc6db8.jpg)
+
+
+
+
+
+
+
