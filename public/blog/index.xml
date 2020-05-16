@@ -17,7 +17,7 @@
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/oreo/</guid>
-      <description>I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!   So basically:  RE = Cream  O = Cookie  O + RE + O = an Oreo sandwich cookie  R Code Chunk library(reticulate) OREO &amp;lt;- &amp;quot;OREO&amp;quot;  Python Code Chunk I want 4 oreos! cookie = r.OREO print(cookie, cookie, cookie, cookie) ## (&amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;)  Let’s separate the top cookie off the rest of the oreo #Python Code Chunk cookie[0] + &amp;#39;&amp;amp;&amp;#39; + &amp;#39; &amp;#39; + cookie[1:] ## &amp;#39;O&amp;amp; REO&amp;#39;  I hate the cream!</description>
+      <description>I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!   So basically: RE = Cream  O = Cookie  O + RE + O = an Oreo sandwich cookie   R Code Chunk library(reticulate) OREO &amp;lt;- &amp;quot;OREO&amp;quot;  Python Code Chunk I want 4 oreos! cookie = r.OREO print(cookie, cookie, cookie, cookie) ## (&amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;)  Let’s separate the top cookie off the rest of the oreo #Python Code Chunk cookie[0] + &amp;#39;&amp;amp;&amp;#39; + &amp;#39; &amp;#39; + cookie[1:] ## &amp;#39;O&amp;amp; REO&amp;#39;  I hate the cream!</description>
     </item>
     
   </channel>

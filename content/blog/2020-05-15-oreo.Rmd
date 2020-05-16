@@ -16,10 +16,10 @@ description: ''
 
 ##So basically:
 
-##RE = Cream 
-##O = Cookie 
+###RE = Cream 
+###O = Cookie 
 
-##O + RE + O = an Oreo sandwich cookie
+###O + RE + O = an Oreo sandwich cookie
 
 #R Code Chunk
 ```{R}

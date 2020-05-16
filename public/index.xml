@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>Get to Know More About Me!</title>
+      <title>Get To Know Me!</title>
       <link>/about/about/</link>
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
@@ -26,7 +26,7 @@
       <pubDate>Fri, 15 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/oreo/</guid>
-      <description>I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!   So basically:  RE = Cream  O = Cookie  O + RE + O = an Oreo sandwich cookie  R Code Chunk library(reticulate) OREO &amp;lt;- &amp;quot;OREO&amp;quot;  Python Code Chunk I want 4 oreos! cookie = r.OREO print(cookie, cookie, cookie, cookie) ## (&amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;)  Let’s separate the top cookie off the rest of the oreo #Python Code Chunk cookie[0] + &amp;#39;&amp;amp;&amp;#39; + &amp;#39; &amp;#39; + cookie[1:] ## &amp;#39;O&amp;amp; REO&amp;#39;  I hate the cream!</description>
+      <description>I found a really funny image on the internet related to oreos. Lets try to emulate this using Python and R!!   So basically: RE = Cream  O = Cookie  O + RE + O = an Oreo sandwich cookie   R Code Chunk library(reticulate) OREO &amp;lt;- &amp;quot;OREO&amp;quot;  Python Code Chunk I want 4 oreos! cookie = r.OREO print(cookie, cookie, cookie, cookie) ## (&amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;, &amp;#39;OREO&amp;#39;)  Let’s separate the top cookie off the rest of the oreo #Python Code Chunk cookie[0] + &amp;#39;&amp;amp;&amp;#39; + &amp;#39; &amp;#39; + cookie[1:] ## &amp;#39;O&amp;amp; REO&amp;#39;  I hate the cream!</description>
     </item>
     
     <item>
@@ -37,7 +37,7 @@
       <guid>/about/resume/</guid>
       <description>RESUME Contact Info Email: le.kevin03@gmail.com
 github.com/kevtle
-  Education  Associates of Science at Richland College (2015-2017) Bachelors of Science and Arts at the University of Texas at Austin w/ Studio Art Minor (2017-Present)  Skills  Experienced in Photoshop, Illustrator, Lightroom, Procreate (for iPad), Canva, and Microsoft Office Loves to be creative whenever applicable! Moderately experienced with R Studio and Python :)   Experience  40 hours shadowing experience at Constant Eye Care with Dr.</description>
+ Education  Associates of Science at Richland College (2015-2017) Bachelors of Science and Arts at the University of Texas at Austin w/ Studio Art Minor (2017-Present)   Skills  Experienced in Photoshop, Illustrator, Lightroom, Procreate (for iPad), Canva, and Microsoft Office Loves to be creative whenever applicable! Moderately experienced with R Studio and Python :)   Experience  40 hours shadowing experience at Constant Eye Care with Dr.</description>
     </item>
     
     <item>
@@ -64,7 +64,7 @@ github.com/kevtle
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
       
       <guid>/projects/</guid>
-      <description>Projects Here are some projects I have recently completed:
+      <description>Here are some projects I have recently completed:
   Exploratory Data Analysis with Tidyverse Tools
   Modeling, Testing, and Classification
   These projects were a blast to do, and I had a bunch of fun analyzing the data :)</description>

@@ -1,12 +1,12 @@
 ---
 title: "Resume"
-output: html_document
-categories:
-- about
-date: "2020-05-15"
-showpagemeta: false
-tags:
-- about
+author: ''
+date: '2020-05-15'
+output: pdf_document
+description: ''
+slug: null
+tags: []
+categories: []
 ---
 
 #RESUME 
@@ -16,7 +16,7 @@ Email: le.kevin03@gmail.com
 
 github.com/kevtle
 
-#Education
+###Education
 - Associates of Science at Richland College (2015-2017)
 - Bachelors of Science and Arts at the University of Texas at Austin w/ Studio Art Minor (2017-Present)
 

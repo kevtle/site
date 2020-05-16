@@ -7,7 +7,6 @@ tags:
 - projects
 title: Projects
 ---
-## Projects 
 
 Here are some projects I have recently completed:
 
