@@ -20,7 +20,7 @@ theme = "hugo-sustain"
   custom_js  = []
 
 [params.social]
-  Github        = "username"
+  Github        = "kevtle"
   Email         = "le.kevin03@gmail.com"
 
 ## Main Menu
